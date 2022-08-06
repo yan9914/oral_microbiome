@@ -1,0 +1,44 @@
+library(xml2)
+library(dplyr)
+library(XML)
+library(stringr)
+
+names_mx <- matrix(nrow = 216, ncol = 376)
+for(i in 772:1147) {
+  url <- paste("https://www.ebi.ac.uk/ena/browser/api/xml/SAMEA406", str_pad(i, 4, pad = 0), sep = "")
+  aqi <- read_xml(url)
+  names <- aqi %>%
+    xml_find_all(xpath = "//SAMPLE_SET/SAMPLE/SAMPLE_ATTRIBUTES/SAMPLE_ATTRIBUTE/TAG") %>%
+    xml_text()
+  names_mx[,i-771] <- names[1:216]
+}
+
+# check if all colnames are equal
+names_mx %>% as.data.frame %>% as.list %>% unique %>% length()==1
+
+names <- names_mx[,1]
+
+metadata <- data.frame()
+for (i in 772:1147){
+  url <- paste("https://www.ebi.ac.uk/ena/browser/api/xml/SAMEA406", str_pad(i, 4, pad = 0), sep = "")
+  aqi <- read_xml(url)
+  sample <- aqi %>%
+    xml_find_all(xpath = "//SAMPLE_SET/SAMPLE/SAMPLE_ATTRIBUTES/SAMPLE_ATTRIBUTE") %>%
+    xml_text()
+  metadata[i-771,1] <- paste("SAMEA406", str_pad(i, 4, pad = 0), sep = "")
+  metadata[i-771,2:218] <- sample
+}
+colnames(metadata) <- c("Accession",names)
+metadata <- metadata[,-218]
+
+for(i in 2:217) {
+  metadata[,i] <- metadata[,i] %>% str_split(names[i-1], simplify = TRUE) %>% .[,2] %>% {ifelse(`==`(.,""), NA_character_, .)}
+}
+
+metadata %<>% apply(2, \(x) ifelse(x == "Missing: Not provided", NA_character_, x)) %>%
+  apply(2, \(x) ifelse(x == "not applicable", NA_character_, x)) %>%
+  apply(2, \(x) ifelse(x == "NA", NA_character_, x))
+  
+
+
+write.csv(metadata, "hillburns_metadata.csv", row.names = FALSE)

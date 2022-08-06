@@ -1,0 +1,26 @@
+{
+    "id": "78296F5E",
+    "path": "~/yanlin_project/microbiome/oral_microbiome/DADA2_Hill.R",
+    "project_path": "DADA2_Hill.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": true,
+    "created": 1659767891079.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "9,16",
+        "scrollLine": "12"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1654074955,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1659767905224,
+    "read_only": false,
+    "read_only_alternatives": []
+}
